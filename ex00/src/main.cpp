@@ -3,25 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daafonso <daafonso@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daniel <daniel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 16:44:18 by daafonso          #+#    #+#             */
-/*   Updated: 2026/03/05 20:00:15 by daafonso         ###   ########.fr       */
+/*   Updated: 2026/04/29 13:56:29 by daniel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/BitcoinExchange.hpp"
+
+#include <iostream>
+#include <fstream>
+#include <string.h>
 
 int is_correct_format(std::string btcFile)
 {
-	// if (!strstr(btcFile.c_str(), ".csv") || )
-	// 	return (std::cerr << "Error: correct format is .csv\n", 0);
-
-	const char	*extension = strrchr(btcFile.c_str(), '.');
-	if (!extension)
-		return (0);
-	if (strncmp(".csv", extension, 4))
-		return (std::cerr << "Error: wrong format should be .csv.\n", 0);
+	size_t pos = btcFile.find(".csv");
+	if (btcFile[pos + 4] != '\0')
+		return (std::cerr << "Error: wrong format should be .csv\n", 0);
 	return(1);
 }
 
