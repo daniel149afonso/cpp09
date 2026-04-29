@@ -6,7 +6,7 @@
 /*   By: daniel <daniel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 16:44:01 by daafonso          #+#    #+#             */
-/*   Updated: 2026/04/29 13:44:21 by daniel           ###   ########.fr       */
+/*   Updated: 2026/04/29 16:31:27 by daniel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,3 +14,4 @@
 #include <iostream>
 #include <fstream>
 #include <string.h>
+#include <map>

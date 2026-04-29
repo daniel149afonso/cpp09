@@ -6,32 +6,40 @@
 /*   By: daniel <daniel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 16:44:18 by daafonso          #+#    #+#             */
-/*   Updated: 2026/04/29 13:56:29 by daniel           ###   ########.fr       */
+/*   Updated: 2026/04/29 16:33:40 by daniel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../includes/BitcoinExchange.hpp"
 
-#include <iostream>
-#include <fstream>
-#include <string.h>
-
-int is_correct_format(std::string btcFile)
-{
+int is_correct_format(std::string btcFile) {
 	size_t pos = btcFile.find(".csv");
 	if (btcFile[pos + 4] != '\0')
 		return (std::cerr << "Error: wrong format should be .csv\n", 0);
 	return(1);
 }
 
-int parsing_file(std::string btcFile)
-{
+int getTheLines(std::string btcFile) {
+	std::map<std::string, double> btc;
+	for (size_t i = 0; i < btcFile.size(); i++)
+	{
+		for (size_t i = 0; i < count; i++)
+		{
+			/* code */
+		}
+		
+	}
+	
+}
+
+int parsing_file(std::string btcFile) {
 	if (!is_correct_format(btcFile))
 		return (0);
+	getTheLines(btcFile);
 	return(1);
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 	if (argc != 2)
 		return (std::cerr << "Error: file is missing.\n", 1);
 	std::ifstream file1(argv[1]);
