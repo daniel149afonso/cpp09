@@ -6,7 +6,7 @@
 /*   By: daniel <daniel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 16:44:18 by daafonso          #+#    #+#             */
-/*   Updated: 2026/05/01 16:28:50 by daniel           ###   ########.fr       */
+/*   Updated: 2026/05/01 18:03:02 by daniel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,12 @@ int loadDatabase(const std::string& filename, std::map<std::string, double>& map
     return 1;
 }
 
+std::string& trim(std::string& str) {
+    while (!str.empty() && str[str.size() - 1] == ' ')
+    str.erase(str.size() - 1);
+    return str;
+}
+
 // parser input.txt
 int parseInput(const std::string& filename, std::map<std::string, double>& map) {
     (void)map;
@@ -61,7 +67,8 @@ int parseInput(const std::string& filename, std::map<std::string, double>& map) 
 
         std::string date = line.substr(0, pos);
         std::string valueStr = line.substr(pos + 1);
-
+        date = trim(date);
+        valueStr = trim(valueStr);
         // ⚠️ à améliorer : enlever espaces
 
         std::stringstream ss(valueStr);
@@ -70,8 +77,13 @@ int parseInput(const std::string& filename, std::map<std::string, double>& map) 
 
         // 👉 pour l’instant juste affichage
         std::cout << date << " => " << value << std::endl;
-    }
+        std::map<std::string, double>::iterator it = map.lower_bound(date);
 
+        if (it != map.end())
+            std::cout << "Value found: " << it->second << std::endl;
+        else
+            std::cout << "Not found" << std::endl;
+    }
     return 1;
 }
 
