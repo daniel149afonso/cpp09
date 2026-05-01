@@ -6,60 +6,89 @@
 /*   By: daniel <daniel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 16:44:18 by daafonso          #+#    #+#             */
-/*   Updated: 2026/04/30 17:31:27 by daniel           ###   ########.fr       */
+/*   Updated: 2026/05/01 16:28:50 by daniel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/BitcoinExchange.hpp"
 
-int is_correct_format(const std::string& file) {
-    if (file.length() < 4 || file.substr(file.length() - 4) != ".csv") {
-        std::cerr << "Error: wrong format should be .csv\n";
-        return 0;
-    }
-    return 1;
-}
-
-int getTheLines(const std::string& filename) {
+// lire data.csv + remplir la map
+int loadDatabase(const std::string& filename, std::map<std::string, double>& map) {
     std::ifstream file(filename.c_str());
-	std::map<std::string, double> m;
     if (!file.is_open()) {
-        std::cerr << "Error: cannot open file\n";
+        std::cerr << "Error: could not open data.csv\n";
         return 0;
     }
 
     std::string line;
+
+    // skip header
+    std::getline(file, line);
+
     while (std::getline(file, line)) {
-		size_t pos = line.find(",");
-		std::string date = line.substr(0, pos);
-		std::string rate = line.substr(pos + 1);
+        size_t pos = line.find(',');
+        if (pos == std::string::npos)
+            continue;
+
+        std::string date = line.substr(0, pos);
+        std::string rate = line.substr(pos + 1);
 
         std::stringstream ss(rate);
         double nb;
-        
         ss >> nb;
-		m[date] = nb;
 
-        std::cout << m[date] << std::endl;
+        map[date] = nb;
     }
     return 1;
 }
 
-int parsing_file(const std::string& btcFile) {
-	
-    return getTheLines(btcFile);
+// parser input.txt
+int parseInput(const std::string& filename, std::map<std::string, double>& map) {
+    (void)map;
+    std::ifstream file(filename.c_str());
+    if (!file.is_open()) {
+        std::cerr << "Error: could not open input file\n";
+        return 0;
+    }
+
+    std::string line;
+
+    while (std::getline(file, line)) {
+        size_t pos = line.find('|');
+        if (pos == std::string::npos) {
+            continue;
+        }
+
+        std::string date = line.substr(0, pos);
+        std::string valueStr = line.substr(pos + 1);
+
+        // ⚠️ à améliorer : enlever espaces
+
+        std::stringstream ss(valueStr);
+        double value;
+        ss >> value;
+
+        // 👉 pour l’instant juste affichage
+        std::cout << date << " => " << value << std::endl;
+    }
+
+    return 1;
 }
 
 int main(int argc, char **argv) {
-    if (argc != 2)
-        return (std::cerr << "Error: file is missing.\n", 1);
+    if (argc != 2) {
+        std::cerr << "Error: file is missing.\n";
+        return 1;
+    }
 
-    std::string fileName(argv[1]);
+    std::map<std::string, double> map;
 
-    if (!is_correct_format(fileName))
+    // ✅ 1. charger data.csv
+    if (!loadDatabase("data.csv", map))
         return 1;
 
-    if (!parsing_file(fileName))
+    // ✅ 2. parser input (argv[1])
+    if (!parseInput(argv[1], map))
         return 1;
 
     return 0;
