@@ -10,7 +10,8 @@ RM          = rm -f
 SRC_DIR     = src
 OBJ_DIR     = objs
 
-SRC         = $(SRC_DIR)/main.cpp
+SRC         = $(SRC_DIR)/main.cpp \
+				$(SRC_DIR)/BitcoinExchange.cpp
 
 OBJ         = $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
