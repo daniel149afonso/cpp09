@@ -1,21 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   RPN.hpp                                            :+:      :+:    :+:   */
+/*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: daniel <daniel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/05 16:44:01 by daafonso          #+#    #+#             */
-/*   Updated: 2026/05/06 01:01:40 by daniel           ###   ########.fr       */
+/*   Created: 2026/03/05 16:44:18 by daafonso          #+#    #+#             */
+/*   Updated: 2026/05/04 12:43:13 by daniel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
-#include <iostream>
-#include <stack>
-#include <sstream>
-#include <cstdlib>
-#include <cctype>
+#include "../includes/BitcoinExchange.hpp"
 
-int applyOp(int a, int b, char op);
-int rpn(char **argv);
+int main(int argc, char **argv) {
+    if (argc != 2) {
+        std::cerr << "Error: file is missing.\n";
+        return 1;
+    }
+
+    std::map<std::string, double> map;
+
+    if (!loadDatabase("data.csv", map))
+        return 1;
+
+    if (!parseInput(argv[1], map))
+        return 1;
+
+    return 0;
+}
