@@ -6,7 +6,7 @@
 /*   By: daniel <daniel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/04 14:05:59 by daniel            #+#    #+#             */
-/*   Updated: 2026/05/06 15:33:23 by daniel           ###   ########.fr       */
+/*   Updated: 2026/05/06 15:34:04 by daniel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ int rpn(char **argv) {
     }
     if (st.size() != 1)
         return std::cerr << "Error\n", 1;
-
     std::cout << st.top() << std::endl;
     return 0;
 }
