@@ -6,7 +6,7 @@
 /*   By: daniel <daniel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 16:44:14 by daafonso          #+#    #+#             */
-/*   Updated: 2026/05/07 16:24:09 by daniel           ###   ########.fr       */
+/*   Updated: 2026/05/07 17:23:21 by daniel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,20 +60,20 @@ void PmergeMe::sortVector(std::vector<int>& v) {
         big.push_back(b);
     }
 
-    // odd element
+    // if the number of elements is impair
     bool hasOdd = v.size() % 2;
     int odd;
 
     if (hasOdd)
         odd = v.back();
 
-    // ---------- RECURSIVE SORT ----------
+    // recursive sort
     sortVector(big);
 
     // ---------- MAIN CHAIN ----------
     v = big;
 
-    // ---------- INSERT SMALL ----------
+    // insert small
     for (size_t i = 0; i < small.size(); i++) {
 
         std::vector<int>::iterator pos =
