@@ -4,6 +4,7 @@ btc
 RPN
 PmergeMe
 .vscode
+.claude
 
 # Compiled Object files
 *.slo

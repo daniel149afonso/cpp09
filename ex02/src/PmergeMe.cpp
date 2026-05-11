@@ -6,7 +6,7 @@
 /*   By: daniel <daniel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 16:44:14 by daafonso          #+#    #+#             */
-/*   Updated: 2026/05/07 17:23:21 by daniel           ###   ########.fr       */
+/*   Updated: 2026/05/11 14:47:37 by daniel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,20 +38,21 @@ static void display_time(clock_t start, clock_t end,
         << time << " us" << std::endl;
 }
 
-// ---------- VECTOR ----------
-void PmergeMe::sortVector(std::vector<int>& v) {
+// Jacob algorithm
+template <typename T> void mergeInsertSort(T& c) {
 
-    if (v.size() <= 1)
+    // already sorted
+    if (c.size() <= 1)
         return;
 
-    std::vector<int> big;
-    std::vector<int> small;
+    T big;
+    T small;
 
-    // ---------- MAKE PAIRS ----------
-    for (size_t i = 0; i + 1 < v.size(); i += 2) {
+    // make pairs
+    for (size_t i = 0; i + 1 < c.size(); i += 2) {
 
-        int a = v[i];
-        int b = v[i + 1];
+        int a = c[i];
+        int b = c[i + 1];
 
         if (a > b)
             std::swap(a, b);
@@ -61,82 +62,34 @@ void PmergeMe::sortVector(std::vector<int>& v) {
     }
 
     // if the number of elements is impair
-    bool hasOdd = v.size() % 2;
+    bool hasOdd = c.size() % 2;
     int odd;
 
     if (hasOdd)
-        odd = v.back();
+        odd = c.back();
 
     // recursive sort
-    sortVector(big);
+    mergeInsertSort(big);
 
-    // ---------- MAIN CHAIN ----------
-    v = big;
+    // main chain
+    c = big;
 
     // insert small
     for (size_t i = 0; i < small.size(); i++) {
 
-        std::vector<int>::iterator pos =
-            std::lower_bound(v.begin(), v.end(), small[i]);
+        typename T::iterator pos =
+            std::lower_bound(c.begin(), c.end(), small[i]);
 
-        v.insert(pos, small[i]);
+        c.insert(pos, small[i]);
     }
 
-    // ---------- INSERT ODD ----------
+    // insert odd
     if (hasOdd) {
 
-        std::vector<int>::iterator pos =
-            std::lower_bound(v.begin(), v.end(), odd);
+        typename T::iterator pos =
+            std::lower_bound(c.begin(), c.end(), odd);
 
-        v.insert(pos, odd);
-    }
-}
-
-// ---------- DEQUE ----------
-void PmergeMe::sortDeque(std::deque<int>& d) {
-
-    if (d.size() <= 1)
-        return;
-
-    std::deque<int> big;
-    std::deque<int> small;
-
-    for (size_t i = 0; i + 1 < d.size(); i += 2) {
-
-        int a = d[i];
-        int b = d[i + 1];
-
-        if (a > b)
-            std::swap(a, b);
-
-        small.push_back(a);
-        big.push_back(b);
-    }
-
-    bool hasOdd = d.size() % 2;
-    int odd;
-
-    if (hasOdd)
-        odd = d.back();
-
-    sortDeque(big);
-
-    d = big;
-
-    for (size_t i = 0; i < small.size(); i++) {
-
-        std::deque<int>::iterator pos =
-            std::lower_bound(d.begin(), d.end(), small[i]);
-
-        d.insert(pos, small[i]);
-    }
-
-    if (hasOdd) {
-
-        std::deque<int>::iterator pos =
-            std::lower_bound(d.begin(), d.end(), odd);
-
-        d.insert(pos, odd);
+        c.insert(pos, odd);
     }
 }
 
@@ -151,18 +104,18 @@ int mergeSort(char **argv, int argc) {
         std::string str(argv[i]);
 
         if (str.empty())
-            return std::cerr << "Error\n", 1;
+            return std::cerr << "Error\n", 0;
 
         // check digits
         for (size_t j = 0; j < str.size(); j++) {
             if (!std::isdigit(str[j]))
-                return std::cerr << "Error\n", 1;
+                return std::cerr << "Error\n", 0;
         }
 
         long nb = std::atol(argv[i]);
 
         if (nb < 0 || nb > 2147483647)
-            return std::cerr << "Error\n", 1;
+            return std::cerr << "Error\n", 0;
 
         v.push_back(static_cast<int>(nb));
         d.push_back(static_cast<int>(nb));
@@ -171,12 +124,12 @@ int mergeSort(char **argv, int argc) {
     // Sort Vector
     printContainer(v, "Before: ");
     clock_t start_vector = clock();
-    PmergeMe::sortVector(v);
+    mergeInsertSort(v);
     clock_t end_vector = clock();
 
     // Sort Deque
     clock_t start_deque = clock();
-    PmergeMe::sortDeque(d);
+    mergeInsertSort(d);
     clock_t end_deque = clock();
 
     // Print Container

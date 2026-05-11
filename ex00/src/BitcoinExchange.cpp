@@ -123,7 +123,12 @@ int parseInput(const std::string& filename, std::map<std::string, double>& map) 
 
         std::stringstream ss(valueStr);
         double value;
-        ss >> value;
+        char extra;
+
+        if (!(ss >> value) || (ss >> extra)) {
+            std::cerr << "Error: bad input => " << line << std::endl;
+            continue;
+        }
 
         if (value < 0) {
             std::cerr << "Error: not a positive number.\n";

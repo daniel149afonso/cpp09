@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
         std::cerr << "Error\n";
         return 1;
     }
-    if (!rpn(argv))
+    if (rpn(argv))
         return 1;
     return 0;
 }
