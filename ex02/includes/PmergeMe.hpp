@@ -20,4 +20,3 @@
 #include <sys/time.h>
 
 int mergeSort(char **argv, int argc);
-template <typename T> void mergeInsertSort(T& c);
