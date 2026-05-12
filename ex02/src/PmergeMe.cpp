@@ -6,7 +6,7 @@
 /*   By: daniel <daniel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 16:44:14 by daafonso          #+#    #+#             */
-/*   Updated: 2026/05/12 17:57:09 by daniel           ###   ########.fr       */
+/*   Updated: 2026/05/13 01:46:07 by daniel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ static std::vector<size_t> buildInsertOrder(size_t k) {
     std::vector<size_t> order;
     if (k <= 1) return order;
 
-    size_t ja = 1, jb = 3; // J(2)=1, J(3)=3
+    size_t ja = 1;
+    size_t jb = 3; // J(2)=1, J(3)=3
     while (ja < k) {
         size_t hi = (jb - 1 < k - 1) ? jb - 1 : k - 1;
         // insert from hi down to ja (exclusive), i.e. indices hi, hi-1, ..., ja
@@ -109,7 +110,7 @@ static void mergeInsertSortVector(std::vector<int>& c) {
         }
     }
 
-    // ---------- STEP 4 : MAIN CHAIN ----------
+    // STEP 4 : MAIN CHAIN
     c.clear();
 
     std::vector<int> small;
@@ -163,56 +164,108 @@ static void mergeInsertSortVector(std::vector<int>& c) {
 // ── Ford-Johnson for std::deque<int> ─────────────────────────────────────────
 
 static void mergeInsertSortDeque(std::deque<int>& c) {
+
     if (c.size() <= 1)
         return;
 
-    std::vector<std::pair<int,int> > pairs;
-    for (size_t i = 0; i + 1 < c.size(); i += 2) {
-        int a = c[i], b = c[i + 1];
-        if (a > b) std::swap(a, b);
-        pairs.push_back(std::make_pair(b, a));
-    }
-    bool hasOdd = c.size() % 2;
-    int  odd    = hasOdd ? c.back() : 0;
+    // ---------- STEP 1 : MAKE PAIRS ----------
+    // pair = (small, big)
 
+    std::vector<std::pair<int, int> > pairs;
+
+    for (size_t i = 0; i + 1 < c.size(); i += 2) {
+
+        int a = c[i];
+        int b = c[i + 1];
+
+        if (a > b)
+            std::swap(a, b);
+
+        // (small, big)
+        pairs.push_back(std::make_pair(a, b));
+    }
+
+    // ---------- ODD ELEMENT ----------
+    bool hasOdd = c.size() % 2;
+    int odd = 0;
+
+    if (hasOdd)
+        odd = c.back();
+
+    // ---------- STEP 2 : SORT BIG ELEMENTS ----------
     std::deque<int> bigElems;
+
     for (size_t i = 0; i < pairs.size(); i++)
-        bigElems.push_back(pairs[i].first);
+        bigElems.push_back(pairs[i].second);
+
     mergeInsertSortDeque(bigElems);
 
-    std::vector<std::pair<int,int> > sortedPairs;
+    // ---------- STEP 3 : REBUILD SORTED PAIRS ----------
+    std::vector<std::pair<int, int> > sortedPairs;
     std::vector<int> used(pairs.size(), 0);
+
     for (size_t i = 0; i < bigElems.size(); i++) {
+
         for (size_t j = 0; j < pairs.size(); j++) {
-            if (!used[j] && pairs[j].first == bigElems[i]) {
+
+            if (!used[j] && pairs[j].second == bigElems[i]) {
+
                 sortedPairs.push_back(pairs[j]);
+
                 used[j] = 1;
+
                 break;
             }
         }
     }
 
+    // ---------- STEP 4 : MAIN CHAIN ----------
     c.clear();
+
     std::vector<int> small;
+
     for (size_t i = 0; i < sortedPairs.size(); i++) {
-        c.push_back(sortedPairs[i].first);
-        small.push_back(sortedPairs[i].second);
+
+        // bigs -> main chain
+        c.push_back(sortedPairs[i].second);
+
+        // smalls -> pending
+        small.push_back(sortedPairs[i].first);
     }
 
-    c.insert(c.begin(), small[0]);
+    // ---------- STEP 5 : INSERT FIRST SMALL ----------
+    if (!small.empty())
+        c.insert(c.begin(), small[0]);
 
+    // ---------- STEP 6 : JACOBSTHAL INSERTION ----------
     std::vector<size_t> order = buildInsertOrder(small.size());
+
     for (size_t idx = 0; idx < order.size(); idx++) {
+
         size_t i = order[idx];
+
+        // safety check
+        if (i >= small.size() || i >= sortedPairs.size())
+            continue;
+
+        // small[i] < sortedPairs[i].second
         std::deque<int>::iterator upper =
-            std::upper_bound(c.begin(), c.end(), sortedPairs[i].first);
+            std::upper_bound(c.begin(), c.end(),
+                            sortedPairs[i].second);
+
         std::deque<int>::iterator pos =
-            std::lower_bound(c.begin(), upper, small[i]);
+            std::lower_bound(c.begin(), upper,
+                            small[i]);
+
         c.insert(pos, small[i]);
     }
 
+    // ---------- STEP 7 : INSERT ODD ----------
     if (hasOdd) {
-        std::deque<int>::iterator pos = std::lower_bound(c.begin(), c.end(), odd);
+
+        std::deque<int>::iterator pos =
+            std::lower_bound(c.begin(), c.end(), odd);
+
         c.insert(pos, odd);
     }
 }
