@@ -6,7 +6,7 @@
 /*   By: daniel <daniel@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 16:44:14 by daafonso          #+#    #+#             */
-/*   Updated: 2026/05/13 01:46:07 by daniel           ###   ########.fr       */
+/*   Updated: 2026/05/13 14:27:58 by daniel           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,27 +31,41 @@ static void display_time(struct timeval start, struct timeval end,
 }
 
 // ── Jacobsthal insertion order ────────────────────────────────────────────────
-// small[0] is inserted first (it is < every big element).
-// This returns the 0-indexed positions in small[1..k-1] to insert next,
-// in the order that minimises binary-search comparisons (Ford-Johnson).
-// Groups are derived from the Jacobsthal sequence J(n) = J(n-1) + 2*J(n-2).
-// Within each group [J(n-1)+1 .. J(n)] the elements are inserted in reverse.
+// add an index to each number 0 1 2 3 4 ----> 0 2 1 4 3
 
-static std::vector<size_t> buildInsertOrder(size_t k) {
+static std::vector<size_t> buildInsertOrder(size_t size) {
+
     std::vector<size_t> order;
-    if (k <= 1) return order;
 
-    size_t ja = 1;
-    size_t jb = 3; // J(2)=1, J(3)=3
-    while (ja < k) {
-        size_t hi = (jb - 1 < k - 1) ? jb - 1 : k - 1;
-        // insert from hi down to ja (exclusive), i.e. indices hi, hi-1, ..., ja
-        for (size_t i = hi + 1; i-- > ja; )
+    // nothing to insert
+    if (size <= 1)
+        return order;
+
+    size_t prev = 1;
+    size_t curr = 3;
+
+    while (prev < size) {
+
+        size_t end = curr - 1;
+
+        if (end >= size)
+            end = size - 1;
+
+        // insert backwards
+        for (size_t i = end; i >= prev; i--) {
+
             order.push_back(i);
-        size_t next = jb + 2 * ja;
-        ja = jb;
-        jb = next;
+            if (i == 0)
+                break;
+        }
+
+        // next Jacobsthal
+        size_t next = curr + (2 * prev);
+
+        prev = curr;
+        curr = next;
     }
+
     return order;
 }
 
@@ -110,7 +124,8 @@ static void mergeInsertSortVector(std::vector<int>& c) {
         }
     }
 
-    // STEP 4 : MAIN CHAIN
+    // STEP 4 : main chain becomes bigElem
+    // 
     c.clear();
 
     std::vector<int> small;
